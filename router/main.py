@@ -4,7 +4,7 @@ import uvicorn
 app = FastAPI()
 class HelloWorld():
     def read_hello(self):
-        return {"data": "Hello World"}
+        return {"data": "Hello Worldo"}
 router = APIRouter()
 router.add_api_route('/api/v2/hello-world', 
 endpoint = HelloWorld().read_hello, methods=["GET"])
