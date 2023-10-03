@@ -1,5 +1,6 @@
 from fastapi import FastAPI, APIRouter
 import uvicorn
+from .routers.worship import worship_router
 
 app = FastAPI()
 # class HelloWorld():
@@ -8,7 +9,7 @@ app = FastAPI()
 # router = APIRouter()
 # router.add_api_route('/api/v2/hello-world', 
 # endpoint = HelloWorld().read_hello, methods=["GET"])
-# app.include_router(router)
+app.include_router(worship_router)
 
 @app.get("/")
 def read_root():
