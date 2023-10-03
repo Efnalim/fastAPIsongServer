@@ -3,7 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, status, HTTPException
 
-router = APIRouter(tags=['hymns'])
+hymn_router = APIRouter(tags=['hymns'])
 
 # @router.post('/subject', response_model=ApiResponse, tags=['subject'])
 # def add_subject(
@@ -72,7 +72,7 @@ router = APIRouter(tags=['hymns'])
 #     )
 
 
-@router.get('/hymns', tags=['hymns'])
+@hymn_router.get('/hymns', tags=['hymns'])
 def get_all_hymns(
 ) -> List:
     """

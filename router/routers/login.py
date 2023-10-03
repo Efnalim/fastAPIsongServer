@@ -3,7 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, status, HTTPException
 
-router = APIRouter(tags=['auth'])
+auth_router = APIRouter(tags=['auth'])
 
 # @router.post('/subject', response_model=ApiResponse, tags=['subject'])
 # def add_subject(
@@ -72,7 +72,7 @@ router = APIRouter(tags=['auth'])
 #     )
 
 
-@router.get('/login', tags=['auth'])
+@auth_router.get('/login', tags=['auth'])
 def login(
 ) -> List:
     """
