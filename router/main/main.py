@@ -1,11 +1,11 @@
 from fastapi import FastAPI, APIRouter
 import uvicorn
-from routers.worship import worship_router
+from routers import worship
 # from .routers.hymn import hymn_router
 # from .routers.login import auth_router
 
 app = FastAPI()
-app.include_router(worship_router)
+app.include_router(worship.worship_router)
 # app.include_router(hymn_router)
 # app.include_router(auth_router)
 
