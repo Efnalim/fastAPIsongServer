@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter
 import uvicorn
 
-from routers.song_router import SongRouter
+from .routers.song_router import SongRouter
 
 app = FastAPI()
 class HelloWorld():
