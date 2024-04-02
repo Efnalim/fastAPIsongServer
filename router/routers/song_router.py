@@ -1,3 +1,5 @@
+from router.config.db import db
+
 class SongRouter():
     def getAllSongs(self):
-        return {"data": "all songs"}
+        return db.songs.find()
