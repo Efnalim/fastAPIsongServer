@@ -5,12 +5,16 @@ from repository import db
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
+import requests
+from ics import Calendar
+from datetime import datetime, timedelta, timezone
 
 load_dotenv()
 
 FE_DEV_URL = os.getenv("FE_DEV_URL")
 FE_PROD_AZURE_URL = os.getenv("FE_PROD_AZURE_URL")
 FE_PROD_RENDER_URL = os.getenv("FE_PROD_RENDER_URL")
+ICAL_URL = os.getenv("ICAL_URL")
 
 app = FastAPI()
 
@@ -32,6 +36,82 @@ app.add_middleware(
 def serialize_doc(doc):
     doc["_id"] = str(doc["_id"])
     return doc
+
+@app.get("/events")
+def get_calendar_events():
+    try:
+        response = requests.get(ICAL_URL)
+        response.raise_for_status()
+        calendar = Calendar(response.text)
+
+        # 🕕 Define your date range: today 06:00 → one month ahead
+        now = datetime.now(timezone.utc)
+        today_6am = now.replace(hour=6, minute=0, second=0, microsecond=0)
+        if now.hour < 6:
+            # If it's before 6AM now, we still want "today 6AM" from this morning
+            today_6am = today_6am - timedelta(days=1)
+        one_month_later = today_6am + timedelta(days=30)
+
+        events = []
+        for event in calendar.events:
+            if not event.begin:
+                continue
+
+            start = event.begin.datetime
+            end = event.end.datetime if event.end else None
+
+            # ✅ Include events starting from today 6:00 up to 30 days ahead
+            if today_6am <= start <= one_month_later and event.description != "Narozeniny":
+                events.append({
+                    "summary": event.name or "(No title)",
+                    "description": event.description or "",
+                    "start": start.isoformat(),
+                    "end": end.isoformat() if end else None,
+                    "location": event.location or "",
+                })
+
+        # Sort chronologically
+        events.sort(key=lambda e: e["start"])
+        return events
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/birthdays")
+def get_calendar_events():
+    try:
+        response = requests.get(ICAL_URL)
+        response.raise_for_status()
+        calendar = Calendar(response.text)
+
+        now = datetime.now(timezone.utc)
+        today_6am = now.replace(hour=6, minute=0, second=0, microsecond=0)
+        if now.hour < 6:
+            today_6am = today_6am - timedelta(days=1)
+        one_week_later = today_6am + timedelta(days=6)
+
+        events = []
+        for event in calendar.events:
+            if not event.begin:
+                continue
+
+            start = event.begin.datetime
+            end = event.end.datetime if event.end else None
+
+            if today_6am <= end <= one_week_later and event.description == "Narozeniny":
+                events.append({
+                    "summary": event.name or "(No title)",
+                    "description": event.description or "",
+                    "start": start.isoformat(),
+                    "end": end.isoformat() if end else None,
+                    "location": event.location or "",
+                })
+
+        events.sort(key=lambda e: e["start"])
+        return events
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/hymns")
 async def get_users():
