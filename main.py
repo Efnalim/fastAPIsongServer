@@ -88,7 +88,7 @@ def get_calendar_events():
         today_6am = now.replace(hour=6, minute=0, second=0, microsecond=0)
         if now.hour < 6:
             today_6am = today_6am - timedelta(days=1)
-        one_week_later = today_6am + timedelta(days=6)
+        one_week_later = today_6am + timedelta(days=7)
 
         events = []
         for event in calendar.events:
